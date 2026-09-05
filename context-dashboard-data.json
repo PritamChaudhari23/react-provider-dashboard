@@ -1,0 +1,35 @@
+{
+  "users": [
+    { "id": 1, "name": "Aditi Rao", "role": "Admin" },
+    { "id": 2, "name": "Kunal Mehta", "role": "Editor" },
+    { "id": 3, "name": "Sara Iqbal", "role": "Viewer" },
+    { "id": 4, "name": "Devraj Singh", "role": "Editor" }
+  ],
+
+  "overviewStats": [
+    { "label": "Active Projects", "value": 12 },
+    { "label": "Tasks Completed", "value": 84 },
+    { "label": "Pending Reviews", "value": 5 },
+    { "label": "Team Members", "value": 4 }
+  ],
+
+  "defaultPreferences": {
+    "itemsPerPage": 10,
+    "defaultView": "overview"
+  },
+
+  "viewOptions": ["overview", "settings", "activity"],
+
+  "activityMessages": [
+    "New task assigned to Kunal Mehta",
+    "Sara Iqbal commented on Project Alpha",
+    "Devraj Singh completed a review",
+    "Aditi Rao updated project settings",
+    "New file uploaded to Project Beta",
+    "Kunal Mehta closed 2 tickets",
+    "Sara Iqbal requested access to Project Gamma",
+    "Weekly report generated"
+  ],
+
+  "notificationTypes": ["info", "success", "warning"]
+}
