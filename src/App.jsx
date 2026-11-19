@@ -42,7 +42,7 @@ function useRenderCounter(name) {
 
 function Header() {
   const { currentUser, login, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, fontSize, toggleTheme, setFontSize } = useTheme();
   useRenderCounter("Header");
 
   return (
@@ -82,6 +82,19 @@ function Header() {
         </label>
 
         <NotificationBell />
+
+        <label className="font-size-picker">
+          <span>Text</span>
+          <select
+            aria-label="Text size"
+            value={fontSize}
+            onChange={(event) => setFontSize(event.target.value)}
+          >
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+          </select>
+        </label>
 
         <button
           className="theme-toggle"

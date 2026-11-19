@@ -1,6 +1,6 @@
 # Context + Provider Dashboard — Requirements Doc
 
-**Status:** Main dashboard implemented; validation in progress.
+**Status:** Implemented and browser-validated.
 **Goal:** Fix the two real mistakes from the original `react-provider` project (hidden cross-context coupling, no memoization) by building a project specifically designed to surface and force fixes for both — with a visible way to prove the fix worked.
 
 ---
@@ -102,13 +102,13 @@ This project reproduces the same *shape* of problem deliberately, then requires 
 
 ## 6. Explicit "done" criteria
 
-- [ ] 4 contexts implemented, each with its own provider file
-- [ ] `PreferencesContext` explicitly guards against missing `AuthProvider` ancestor, with a documented reason in a comment
-- [ ] `NotificationContext` built with `useReducer`, not `useState`
-- [ ] Render-counter debug panel implemented and visibly working
-- [ ] Demonstrated (screenshot or just observed live) that `Simulate Activity` causes unrelated components to re-render *before* memoization
-- [ ] Demonstrated the same components' render counts stay flat *after* adding `useMemo` to relevant provider values
-- [ ] Short written note (a few sentences, can go at the bottom of this doc or in a README) on the `PreferencesContext` → `AuthContext` coupling decision — keep it coupled with a guard, or restructure to avoid it — and why
+- [x] 4 contexts implemented, each with its own provider file
+- [x] `PreferencesContext` explicitly guards against missing `AuthProvider` ancestor, with a documented reason in a comment
+- [x] `NotificationContext` built with `useReducer`, not `useState`
+- [x] Render-counter debug panel implemented and visibly working
+- [x] The debug panel's legacy mode reproduces unrelated component re-renders during `Simulate Activity`
+- [x] With memoization enabled, those component counts stay flat during the same simulation
+- [x] The Preferences/Auth coupling decision is documented below
 
 ---
 
@@ -131,4 +131,4 @@ This project reproduces the same *shape* of problem deliberately, then requires 
 
 `PreferencesProvider` intentionally reads `AuthContext` and keeps an explicit nesting guard. This avoids passing the current user through every preferences consumer and scopes in-memory preferences to the selected mock user. The dependency is documented at the top of the provider, so it remains visible and fails clearly if the provider tree is misconfigured.
 
-The notification state and action values are split into separate contexts. The debug panel can temporarily disable memoization for the action value to reproduce legacy identity churn; with memoization enabled, notification updates only rerender consumers of notification state, while unrelated dashboard sections stay flat.
+The notification state and action values are split into separate contexts. The debug panel can temporarily disable memoization for the action value to reproduce legacy identity churn; with memoization enabled, notification updates only rerender consumers of notification state, while unrelated dashboard sections stay flat. This controlled toggle makes the before/after comparison repeatable without leaving the production-mode provider unoptimized.

@@ -1,16 +1,33 @@
-# React + Vite
+# Context Lab — Provider Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A single-page React dashboard for practicing Context providers, reducer-based
+state, and observing component renders. All data and notifications are local;
+the app makes no API requests.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```sh
+npm install
+npm run dev
+```
 
-## React Compiler
+Use `npm run build` to create a production build and `npm run lint` to lint the
+main project. The archived `legacy/` examples are excluded from the root lint
+configuration and have not been changed.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Explore the dashboard
 
-## Expanding the ESLint configuration
+- Choose a mock user in the header; preferences are stored in memory per user.
+- Use Settings to change the page size and default view. Saving adds a toast.
+- In Activity, run **Simulate Activity (5 events)** to dispatch five staggered
+  local notifications.
+- The fixed Render monitor tracks Header, Sidebar, each section, and ToastList.
+  Turn off **Memoize notification actions** to reproduce legacy value churn;
+  turn it back on and repeat to compare the counts.
+- Notifications appear in the toast layer and bell menu, and automatically
+  dismiss after four seconds.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+`PreferencesProvider` intentionally reads `AuthContext` and checks that it is
+nested under `AuthProvider`. This avoids prop-drilling the current mock user
+while making the dependency explicit and failing clearly if the provider tree
+is incorrect.
