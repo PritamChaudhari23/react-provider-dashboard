@@ -27,20 +27,37 @@ const PreferencesProvider = ({ children }) => {
     throw new Error("PreferencesProvider must be nested inside AuthProvider");
   }
 
-  const [itemsPerPage, setItemsPerPage] = useState(
-    data.defaultPreferences.itemsPerPage,
-  );
-  const [defaultView, setDefaultView] = useState(
-    data.defaultPreferences.defaultView,
-  );
-
   const userId = authCtx.currentUser?.id ?? null;
-  const updateItemsPerPage = useCallback((number) => {
-    setItemsPerPage(number);
-  }, []);
-  const updateDefaultView = useCallback((view) => {
-    setDefaultView(view);
-  }, []);
+  const [preferencesByUser, setPreferencesByUser] = useState({});
+  const userPreferences =
+    preferencesByUser[userId] ?? data.defaultPreferences;
+  const itemsPerPage = userPreferences.itemsPerPage;
+  const defaultView = userPreferences.defaultView;
+
+  const updateItemsPerPage = useCallback(
+    (number) => {
+      setPreferencesByUser((previous) => ({
+        ...previous,
+        [userId]: {
+          ...(previous[userId] ?? data.defaultPreferences),
+          itemsPerPage: number,
+        },
+      }));
+    },
+    [userId],
+  );
+  const updateDefaultView = useCallback(
+    (view) => {
+      setPreferencesByUser((previous) => ({
+        ...previous,
+        [userId]: {
+          ...(previous[userId] ?? data.defaultPreferences),
+          defaultView: view,
+        },
+      }));
+    },
+    [userId],
+  );
 
   const value = useMemo(
     () => ({

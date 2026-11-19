@@ -5,14 +5,26 @@ import {
   useContext,
   useMemo,
   useReducer,
+  useState,
 } from "react";
 
-const NotificationContext = createContext(null);
+const NotificationStateContext = createContext(null);
+const NotificationActionsContext = createContext(null);
 
 export const useNotifications = () => {
-  const context = useContext(NotificationContext);
+  const context = useContext(NotificationStateContext);
   if (!context) {
     throw new Error("useNotifications must be used in Notification Provider");
+  }
+  return context;
+};
+
+export const useNotificationActions = () => {
+  const context = useContext(NotificationActionsContext);
+  if (!context) {
+    throw new Error(
+      "useNotificationActions must be used in Notification Provider",
+    );
   }
   return context;
 };
@@ -32,6 +44,7 @@ function notificationReducer(state, action) {
 
 const NotificationProvider = ({ children }) => {
   const [notifications, dispatch] = useReducer(notificationReducer, []);
+  const [memoizationEnabled, setMemoizationEnabled] = useState(true);
 
   // IDs and timestamps are built outside the reducer so the reducer stays pure.
   const addNotification = useCallback((message, type = "info") => {
@@ -54,21 +67,32 @@ const NotificationProvider = ({ children }) => {
     dispatch({ type: "CLEAR_ALL" });
   }, []);
 
-  const value = useMemo(
-    () =>
-      ({
-        notifications,
-        addNotification,
-        removeNotification,
-        clearAll,
-      }),
-    [notifications, addNotification, removeNotification, clearAll],
+  const memoizedActions = useMemo(
+    () => ({
+      addNotification,
+      removeNotification,
+      clearAll,
+      memoizationEnabled,
+      setMemoizationEnabled,
+    }),
+    [
+      addNotification,
+      removeNotification,
+      clearAll,
+      memoizationEnabled,
+      setMemoizationEnabled,
+    ],
   );
+  const actions = memoizationEnabled
+    ? memoizedActions
+    : { ...memoizedActions };
 
   return (
-    <NotificationContext.Provider value={value}>
-      {children}
-    </NotificationContext.Provider>
+    <NotificationStateContext.Provider value={notifications}>
+      <NotificationActionsContext.Provider value={actions}>
+        {children}
+      </NotificationActionsContext.Provider>
+    </NotificationStateContext.Provider>
   );
 };
 

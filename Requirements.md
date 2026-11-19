@@ -1,6 +1,6 @@
 # Context + Provider Dashboard — Requirements Doc
 
-**Status:** Queued — build after the Redux Toolkit + Saga dashboard is complete.
+**Status:** Main dashboard implemented; validation in progress.
 **Goal:** Fix the two real mistakes from the original `react-provider` project (hidden cross-context coupling, no memoization) by building a project specifically designed to surface and force fixes for both — with a visible way to prove the fix worked.
 
 ---
@@ -125,4 +125,10 @@ This project reproduces the same *shape* of problem deliberately, then requires 
 
 ## 8. Data file
 
-See accompanying `context-dashboard-data.json` — contains the static user list (for the "viewing as" picker), placeholder overview stats, and the pool of fake activity messages used by the Simulate Activity button.
+`src/data.json` contains the static user list (for the "viewing as" picker), placeholder overview stats, and the pool of fake activity messages used by the Simulate Activity button.
+
+## 9. Implementation notes
+
+`PreferencesProvider` intentionally reads `AuthContext` and keeps an explicit nesting guard. This avoids passing the current user through every preferences consumer and scopes in-memory preferences to the selected mock user. The dependency is documented at the top of the provider, so it remains visible and fails clearly if the provider tree is misconfigured.
+
+The notification state and action values are split into separate contexts. The debug panel can temporarily disable memoization for the action value to reproduce legacy identity churn; with memoization enabled, notification updates only rerender consumers of notification state, while unrelated dashboard sections stay flat.
