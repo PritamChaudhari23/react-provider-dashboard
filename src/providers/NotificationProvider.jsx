@@ -1,4 +1,11 @@
-import { createContext, useContext, useReducer } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useReducer,
+} from "react";
 
 const NotificationContext = createContext(null);
 
@@ -26,8 +33,8 @@ function notificationReducer(state, action) {
 const NotificationProvider = ({ children }) => {
   const [notifications, dispatch] = useReducer(notificationReducer, []);
 
-  // id and timestamp are built here so the reducer stays pure
-  function addNotification(message, type = "info") {
+  // IDs and timestamps are built outside the reducer so the reducer stays pure.
+  const addNotification = useCallback((message, type = "info") => {
     dispatch({
       type: "ADD_NOTIFICATION",
       payload: {
@@ -37,20 +44,29 @@ const NotificationProvider = ({ children }) => {
         timestamp: Date.now(),
       },
     });
-  }
+  }, []);
 
-  function removeNotification(id) {
+  const removeNotification = useCallback((id) => {
     dispatch({ type: "REMOVE_NOTIFICATION", payload: id });
-  }
+  }, []);
 
-  function clearAll() {
+  const clearAll = useCallback(() => {
     dispatch({ type: "CLEAR_ALL" });
-  }
+  }, []);
+
+  const value = useMemo(
+    () =>
+      ({
+        notifications,
+        addNotification,
+        removeNotification,
+        clearAll,
+      }),
+    [notifications, addNotification, removeNotification, clearAll],
+  );
 
   return (
-    <NotificationContext.Provider
-      value={{ notifications, addNotification, removeNotification, clearAll }}
-    >
+    <NotificationContext.Provider value={value}>
       {children}
     </NotificationContext.Provider>
   );

@@ -1,6 +1,13 @@
+/* eslint-disable react-refresh/only-export-components */
 // Depends on AuthProvider: reads currentUser, so it must be nested inside it.
 // Mounting it without AuthProvider throws instead of failing silently.
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import { AuthContext } from "./AuthProvider";
 import data from "../data.json";
 
@@ -28,17 +35,26 @@ const PreferencesProvider = ({ children }) => {
   );
 
   const userId = authCtx.currentUser?.id ?? null;
+  const updateItemsPerPage = useCallback((number) => {
+    setItemsPerPage(number);
+  }, []);
+  const updateDefaultView = useCallback((view) => {
+    setDefaultView(view);
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      userId,
+      itemsPerPage,
+      defaultView,
+      setItemsPerPage: updateItemsPerPage,
+      setDefaultView: updateDefaultView,
+    }),
+    [userId, itemsPerPage, defaultView, updateItemsPerPage, updateDefaultView],
+  );
 
   return (
-    <PreferencesContext.Provider
-      value={{
-        userId,
-        itemsPerPage,
-        defaultView,
-        setItemsPerPage,
-        setDefaultView,
-      }}
-    >
+    <PreferencesContext.Provider value={value}>
       {children}
     </PreferencesContext.Provider>
   );
